@@ -40,9 +40,11 @@ public class UIWalls extends UI3dComponent {
 public class UIOutputControls extends UICollapsibleSection {
   public UIOutputControls(final LXStudio.UI ui) {
     super(ui, 0, 0, ui.leftPane.global.getContentWidth(), 200);
-    setTitle("Output");
+    setTitle("Output"); 
     setLayout(UI2dContainer.Layout.VERTICAL);
     setChildMargin(2);
     new UILabel(0, 0, getContentWidth(), 18).setLabel("Hello").addToContainer(this);
+    new UIButton(0,0, getContentWidth(), 18).setLabel("Enabled").setEnabled(true).addToContainer(this);
+    new UITextBox(0, 0, getContentWidth(), 18).setValue("Test").addToContainer(this);
   }
 }

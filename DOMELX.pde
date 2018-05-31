@@ -26,15 +26,26 @@ void setup() {
     protected void initialize(LXStudio lx, LXStudio.UI ui) {
       // Add custom LXComponents or LXOutput objects to the engine here,
       // before the UI is constructed
-      OPCOutput opcoutput = new OPCOutput(lx, "192.168.0.10", 7890, model.fixtures.get(0));
-      lx.engine.output.addChild(opcoutput);
+      try {
+        LXDatagramOutput domeoutput = new LXDatagramOutput(lx);
+        LXDatagram dg = new DomeDatagram();
+        try {
+          domeoutput.addDatagram(dg.setAddress("192.168.0.201").setPort(1337));
+        } catch (Exception e) {
+          println(e);
+        }
+        domeoutput.enabled.setValue(false);
+        lx.engine.output.addChild(domeoutput);
+      } catch (java.net.SocketException e) {
+        return;
+      }
     }
     
     @Override
     protected void onUIReady(LXStudio lx, LXStudio.UI ui) {
       // The UI is now ready, can add custom UI components if desired
       ui.preview.addComponent(new UIWalls());
-      uiOutputControls = (UIOutputControls) new UIOutputControls(ui).setExpanded(false).addToContainer(ui.leftPane.global);
+      uiOutputControls = (UIOutputControls) new UIOutputControls(ui).setExpanded(true).addToContainer(ui.leftPane.global);
     }
   };
 

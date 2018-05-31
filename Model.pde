@@ -26,7 +26,7 @@ public static class Model extends LXModel {
       //}
       
       
-      for (int i = 0; i<20; i++) {
+      for (int i = 0; i<300; i++) {
         addPoint(new LXPoint(
           0,
           i*10*CENTIMETER,
