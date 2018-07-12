@@ -1,38 +1,22 @@
-/**
- * This is a very basic model class that is a 3-D matrix
- * of points. The model contains just one fixture with all the
- * points in the matrix.
- */
-public static class Model extends LXModel {
-  
-  public Model() {
-    super(new Fixture());
+LXModel buildModel(JSONArray points) {
+  return new DomeModel(points);
+}
+
+// Currently this takes a JSON array of 3-float-array points [[x1,y1,z1], [x2,y2,z2], ...]
+// multiplies all points by a SCALE factor and adds them all to the UI
+// TODO: replace this with an actual parametric dome algorithm
+public static class DomeModel extends LXModel {
+
+  public final static int SCALE = 20;
+
+  public DomeModel(JSONArray points) {
+    super(new DomeFixture(points));
   }
-  
-  private static class Fixture extends LXAbstractFixture {
-    
-    private static final int MATRIX_SIZE = 12;
-    private static final int DOME_FREQUENCY = 3;
-    private static final int PIXELS_PER_STRUT = 64;
-    private static final float DOME_RADIUS = 2.5*METER; 
-    
-    private Fixture() {
-      //for (int x = 0; x < 5; x++) {
-      //    addPoint(new LXPoint(
-      //      DOME_RADIUS * Math.cos(2.0*Math.PI*float(x)/5.0),
-      //      DOME_RADIUS * Math.sin(2.0*Math.PI*float(x)/5.0),
-      //      0
-      //    ));
-      //}
-      
-      
-      for (int i = 0; i<300; i++) {
-        addPoint(new LXPoint(
-          0,
-          i*10*CENTIMETER,
-          0
-        ));
-      }
+  public static class DomeFixture extends LXAbstractFixture {
+  DomeFixture(JSONArray points) {
+    for (int i =0; i < points.size(); i++) {
+      JSONArray point = points.getJSONArray(i);
+      addPoint(new LXPoint(point.getFloat(0)*SCALE, point.getFloat(1)*SCALE, point.getFloat(2)*SCALE));
     }
   }
 }
