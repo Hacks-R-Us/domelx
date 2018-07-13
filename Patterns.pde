@@ -40,3 +40,28 @@ public static class PlanePattern extends LXPattern {
     }
   }
 }
+
+@LXCategory("Form")
+public static class SparklePattern extends LXPattern {
+
+  public final CompoundParameter chance = new CompoundParameter("Chance", 0.01)
+    .setDescription("The probability any pixel is lit on each run.");
+  //public final DiscreteParameter number = new DiscreteParameter("Number", 128)
+  //  .setDescription("The number of simultaneous points");
+
+  public SparklePattern(LX lx) {
+    super(lx);
+    addParameter("chance", this.chance);
+    //addParameter("number", this.number);
+  }
+
+  public void run(double deltaMs) {
+      // for(int i=0; i<this.number.getValuei(); i++) {
+      //   LXPoint p = model.points[int(applet.random(model.points.length))];
+      //   colors[p.index] = LXColor.gray(100);
+      // }
+      for (LXPoint p : model.points) {
+        colors[p.index] = applet.random(1) < this.chance.getValuef()/10 ? LXColor.gray(100) : LXColor.gray(0);
+      }
+  }
+}
