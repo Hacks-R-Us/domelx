@@ -24,12 +24,13 @@
 // Reference to top-level LX instance
 heronarts.lx.studio.LXStudio lx;
 DomeOutput domeOutput;
+static PApplet applet;
 
 void setup() {
+  applet = this;
   // Processing setup, constructs the window and the LX instance
   size(800, 720, P3D);
-  JSONArray points = loadJSONArray("ledlist.json");
-  lx = new heronarts.lx.studio.LXStudio(this, buildModel(points), MULTITHREADED);
+  lx = new heronarts.lx.studio.LXStudio(this, buildModel(), MULTITHREADED);
   lx.ui.setResizable(RESIZABLE);
 }
 

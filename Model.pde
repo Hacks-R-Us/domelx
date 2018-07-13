@@ -1,4 +1,5 @@
-LXModel buildModel(JSONArray points) {
+LXModel buildModel() {
+  JSONArray points = applet.loadJSONArray("ledlist.json");
   return new DomeModel(points);
 }
 
@@ -13,10 +14,11 @@ public static class DomeModel extends LXModel {
     super(new DomeFixture(points));
   }
   public static class DomeFixture extends LXAbstractFixture {
-  DomeFixture(JSONArray points) {
-    for (int i =0; i < points.size(); i++) {
-      JSONArray point = points.getJSONArray(i);
-      addPoint(new LXPoint(point.getFloat(0)*SCALE, point.getFloat(1)*SCALE, point.getFloat(2)*SCALE));
+    DomeFixture(JSONArray points) {
+      for (int i =0; i < points.size(); i++) {
+        JSONArray point = points.getJSONArray(i);
+        addPoint(new LXPoint(point.getFloat(0)*SCALE, point.getFloat(1)*SCALE, point.getFloat(2)*SCALE));
+      }
     }
   }
 }
