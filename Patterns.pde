@@ -88,13 +88,59 @@ public static class FirePattern extends LXPattern {
     addParameter("modulation", this.heightModulation);
     addParameter("crackle", this.targetCrackle);
     addParameter("offset", this.timeOffset);
+@LXCategory("Form")
+public static class ProbablyTooFlashyPattern extends LXPattern {
+  double timeSinceChange = 0;
+  int previous_red[];
+  int previous_green[];
+  int previous_blue[];
+  int target_red[];
+  int target_green[];
+  int target_blue[];
+  
+  public final CompoundParameter height = new CompoundParameter("Height", 1, 100)
+    .setDescription("The height of the pattern");
+    
+  public final CompoundParameter heightModulation = new CompoundParameter("HeightModulation", 1, 100)
+    .setDescription("Modulation of pattern height");
+    
+  public final CompoundParameter targetCrackle = new CompoundParameter("Target Crackle", 1, 100)
+    .setDescription("The crackle of the pattern");
+    
+  public final CompoundParameter timeOffset = new CompoundParameter("Time Offset", 10, 100)
+  .setDescription("\"Speed\" of the pattern");
+    
+  public ProbablyTooFlashyPattern(LX lx) {
+    super(lx);
+    addParameter("height", this.height);
+    addParameter("modulation", this.heightModulation);
+    addParameter("crackle", this.targetCrackle);
+    addParameter("offset", this.timeOffset);
+    
+    timeOffset.setValue(10);
+    
+    previous_red = new int[colors.length];
+    target_red = new int[colors.length];
+    previous_green = new int[colors.length];
+    target_green = new int[colors.length];
+    previous_blue = new int[colors.length];
+    target_blue = new int[colors.length];
+    
+    for (LXPoint p : model.points){
+      previous_red[p.index] = 0;
+      previous_green[p.index] = 0;
+      previous_blue[p.index] = 0;
+      target_red[p.index] = 0;
+      target_green[p.index] = 0;
+      target_blue[p.index] = 0;
+    }
   }
   
   public void run(double deltaMs){
     timeSinceChange += deltaMs;
     
-    // If enough time has passed
     if(timeSinceChange >= timeOffset.getValue() * 10){
+      // If enough time has passed
       // Instant modulation reduces the height of the fire in the current frame
       int instantModulation = (int)(heightModulation.getValue() * applet.random(1));
       
@@ -104,17 +150,31 @@ public static class FirePattern extends LXPattern {
       for (LXPoint p : model.points){
         if(p.z <= instantTargetHeight){
           //colors[p.index] = LXColor.lerp(LXColor.rgb(200, 0, 0), colors[p.index]);
-          int green = (int)map(p.z, 0, instantTargetHeight, 0, 150);
-          int blue = (int)map(p.z, 0, instantTargetHeight, 0, 30);
-          colors[p.index] = LXColor.rgb(200, green, blue);
+          target_red[p.index] = 200;
+          target_green[p.index] = (int)map(p.z, 0, instantTargetHeight, 0, 150);
+          target_blue[p.index] = (int)map(p.z, 0, instantTargetHeight, 0, 30);
         }else if(p.z > instantTargetHeight && p.z <= instantTargetHeight + (applet.random(1) * targetCrackle.getValue() * 5)){
-          colors[p.index] = LXColor.rgb(200, 150, 30);
+          target_red[p.index] = 200;
+          target_green[p.index] = 150;
+          target_blue[p.index] = 30;
         }else{
-          colors[p.index] = LXColor.rgb(0, 0, 0);
+          target_red[p.index] = 0;
+          target_green[p.index] = 0;
+          target_blue[p.index] = 0;
         }
       }
       
       timeSinceChange = 0;
     }
+    
+    for (LXPoint p : model.points){
+      int red = (int)map((float)timeSinceChange, 0, (float)timeOffset.getValue(), (float)previous_red[p.index], (float)target_red[p.index]);
+      int green = (int)map((float)timeSinceChange, 0, (float)timeOffset.getValue(), (float)previous_green[p.index], (float)target_green[p.index]);
+      int blue = (int)map((float)timeSinceChange, 0, (float)timeOffset.getValue(), (float)previous_blue[p.index], (float)target_blue[p.index]);
+      
+      colors[p.index] = LXColor.rgb(red, green, blue);
+    }
+  }
+}
   }
 }
