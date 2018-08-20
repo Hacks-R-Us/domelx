@@ -65,3 +65,56 @@ public static class SparklePattern extends LXPattern {
       }
   }
 }
+
+@LXCategory("Form")
+public static class FirePattern extends LXPattern {
+  double timeSinceChange = 0;
+  
+  public final CompoundParameter height = new CompoundParameter("Height", 1, 100)
+    .setDescription("The height of the fire");
+    
+  public final CompoundParameter heightModulation = new CompoundParameter("HeightModulation", 1, 100)
+    .setDescription("Modulation of fire height");
+    
+  public final CompoundParameter targetCrackle = new CompoundParameter("Target Crackle", 1, 100)
+    .setDescription("The crackle of the fire");
+    
+  public final CompoundParameter timeOffset = new CompoundParameter("Time Offset", 1, 100)
+  .setDescription("\"Speed\" of the fire");
+    
+  public FirePattern(LX lx) {
+    super(lx);
+    addParameter("height", this.height);
+    addParameter("modulation", this.heightModulation);
+    addParameter("crackle", this.targetCrackle);
+    addParameter("offset", this.timeOffset);
+  }
+  
+  public void run(double deltaMs){
+    timeSinceChange += deltaMs;
+    
+    // If enough time has passed
+    if(timeSinceChange >= timeOffset.getValue() * 10){
+      // Instant modulation reduces the height of the fire in the current frame
+      int instantModulation = (int)(heightModulation.getValue() * applet.random(1));
+      
+      // Instatnt target height is the height of the fire this frame
+      int instantTargetHeight = (int)(height.getValue() - applet.random(10)) - instantModulation;
+      
+      for (LXPoint p : model.points){
+        if(p.z <= instantTargetHeight){
+          //colors[p.index] = LXColor.lerp(LXColor.rgb(200, 0, 0), colors[p.index]);
+          int green = (int)map(p.z, 0, instantTargetHeight, 0, 150);
+          int blue = (int)map(p.z, 0, instantTargetHeight, 0, 30);
+          colors[p.index] = LXColor.rgb(200, green, blue);
+        }else if(p.z > instantTargetHeight && p.z <= instantTargetHeight + (applet.random(1) * targetCrackle.getValue() * 5)){
+          colors[p.index] = LXColor.rgb(200, 150, 30);
+        }else{
+          colors[p.index] = LXColor.rgb(0, 0, 0);
+        }
+      }
+      
+      timeSinceChange = 0;
+    }
+  }
+}
