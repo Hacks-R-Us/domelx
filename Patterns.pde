@@ -65,3 +65,44 @@ public static class SparklePattern extends LXPattern {
       }
   }
 }
+
+@LXCategory("Form")
+public static class BeaconPattern extends LXPattern {
+  int previous_red = 0;
+  int timeSinceChange = 0;
+  int target_red = 0;
+  
+  public enum Axis {
+    X, Y, Z
+  };
+  
+  public final CompoundParameter time = new CompoundParameter("Time", 1, 100)
+  
+    .setDescription("The flash rate");
+  public BeaconPattern(LX lx) {
+    super(lx);
+    addParameter("time", this.time);
+    target_red = 200;
+  }
+  
+  public void run(double deltaMs) {
+    timeSinceChange += deltaMs;
+    
+    if(timeSinceChange >= time.getValue() * 100){
+      timeSinceChange = 0;
+      
+      for (LXPoint p : model.points){
+        colors[p.index] = LXColor.rgb(target_red, 0, 0);
+      }
+      
+      int temp = previous_red;
+      previous_red = target_red;
+    }else{
+      target_red = temp;
+        int red = (int)map((float)timeSinceChange, 0, (float)time.getValue() * 100, (float)previous_red, (float)target_red);
+      for (LXPoint p : model.points){
+        colors[p.index] = LXColor.rgb(red, 0, 0);
+      }
+    }
+  }
+}
