@@ -67,28 +67,6 @@ public static class SparklePattern extends LXPattern {
 }
 
 @LXCategory("Form")
-public static class FirePattern extends LXPattern {
-  double timeSinceChange = 0;
-  
-  public final CompoundParameter height = new CompoundParameter("Height", 1, 100)
-    .setDescription("The height of the fire");
-    
-  public final CompoundParameter heightModulation = new CompoundParameter("HeightModulation", 1, 100)
-    .setDescription("Modulation of fire height");
-    
-  public final CompoundParameter targetCrackle = new CompoundParameter("Target Crackle", 1, 100)
-    .setDescription("The crackle of the fire");
-    
-  public final CompoundParameter timeOffset = new CompoundParameter("Time Offset", 1, 100)
-  .setDescription("\"Speed\" of the fire");
-    
-  public FirePattern(LX lx) {
-    super(lx);
-    addParameter("height", this.height);
-    addParameter("modulation", this.heightModulation);
-    addParameter("crackle", this.targetCrackle);
-    addParameter("offset", this.timeOffset);
-@LXCategory("Form")
 public static class ProbablyTooFlashyPattern extends LXPattern {
   double timeSinceChange = 0;
   int previous_red[];
@@ -174,7 +152,5 @@ public static class ProbablyTooFlashyPattern extends LXPattern {
       
       colors[p.index] = LXColor.rgb(red, green, blue);
     }
-  }
-}
   }
 }
