@@ -284,3 +284,35 @@ public static class BeaconPattern extends LXPattern {
     }
   }
 }
+
+@LXCategory("Form")
+public static class StrutSparklePattern extends LXPattern {
+
+  public final CompoundParameter chance = new CompoundParameter("Chance", 0.01)
+    .setDescription("The probability any strut is lit on each run.");
+  //public final DiscreteParameter number = new DiscreteParameter("Number", 128)
+  //  .setDescription("The number of simultaneous points");
+
+  private int[] lastcolors;
+
+  public StrutSparklePattern(LX lx) {
+    super(lx);
+    addParameter("chance", this.chance);
+
+    this.lastcolors = new int[colors.length];
+    //addParameter("number", this.number);
+  }
+
+  public void run(double deltaMs) {
+      // for(int i=0; i<this.number.getValuei(); i++) {
+      //   LXPoint p = model.points[int(applet.random(model.points.length))];
+      //   colors[p.index] = LXColor.gray(100);
+      // }
+      for (LXFixture s : model.fixtures) {
+        int c = applet.random(1) < this.chance.getValuef()/10 ? LXColor.gray(100) : LXColor.gray(0);
+        //this.lastcolors.
+        setColor(s, c);
+        this.lastcolors = colors.clone();
+      }
+  }
+}
