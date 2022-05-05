@@ -3,7 +3,7 @@ public class DomeOutput {
   private LXDatagramOutput theOutput;
   public void initOutput(final heronarts.lx.studio.LXStudio lx) {
     try {
-      theOutput = new LXDatagramOutput(lx);
+      theOutput = new LXDatagram(lx);
       LXDatagram dg = new DomeDatagram();
       try {
         theOutput.addDatagram(dg.setAddress("192.168.0.201").setPort(1337));

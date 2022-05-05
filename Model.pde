@@ -14,25 +14,29 @@ public static class DomeModel extends LXModel {
     super(DomeModel.BuildFixtures(domeConf));
   }
 
-  public static StrutFixture[] BuildFixtures(JSONObject domeConf) {
+  public static LXModel[] BuildFixtures(JSONObject domeConf) {
     ArrayList<StrutFixture> struts = new ArrayList<StrutFixture>();
     JSONArray jsonstruts = domeConf.getJSONArray("struts");
     for (int i =0; i < jsonstruts.size(); i++) {
-      struts.add(new StrutFixture(jsonstruts.getJSONObject(i)));
+      JSONObject strutconf = jsonstruts.getJSONObject(i);
+      String strutType = strutconf.getString("type");
+      JSONArray leds = strutconf.getJSONArray("leds");
+      ArrayList<LXPoint> points  = new ArrayList<LXPoint>();
+      for (int j=0; j<leds.size(); j++) {
+        JSONArray led = leds.getJSONArray(j);
+        points.add(new LXPoint(led.getFloat(0)*SCALE, led.getFloat(1)*SCALE, led.getFloat(2)*SCALE));
+      }
+      struts.add(new StrutFixture(strutType, points));
     }
-    return struts.toArray(new StrutFixture[struts.size()]);
+    return struts.toArray(new LXModel[struts.size()]);
   }
 
-  public static class StrutFixture extends LXAbstractFixture {
+  public static class StrutFixture extends LXModel {
     public final String type;
 
-    StrutFixture(JSONObject strutconf) {
-        this.type = strutconf.getString("type");
-        JSONArray leds = strutconf.getJSONArray("leds");
-        for (int i=0; i<leds.size(); i++) {
-          JSONArray led = leds.getJSONArray(i);
-          addPoint(new LXPoint(led.getFloat(0)*SCALE, led.getFloat(1)*SCALE, led.getFloat(2)*SCALE));
-        }
+    StrutFixture(String strutType, ArrayList<LXPoint> point) {
+      super(point);
+      this.type = strutType;
     }
   }
 }

@@ -16,8 +16,7 @@
 // Welcome to LX Studio! Getting started is easy...
 // 
 // (1) Quickly scan this file
-// (2) Look at "Model" to define your model
-// (3) Move on to "Patterns" to write your animations
+// (2) Move on to "Patterns" to write your animations
 // 
 // ---------------------------------------------------------------------------
 
@@ -26,17 +25,29 @@ heronarts.lx.studio.LXStudio lx;
 DomeOutput domeOutput;
 static PApplet applet;
 
-void setup() {
-  applet = this;
-  // Processing setup, constructs the window and the LX instance
-  size(800, 720, P3D);
-  lx = new heronarts.lx.studio.LXStudio(this, buildModel(), MULTITHREADED);
-  lx.ui.setResizable(RESIZABLE);
+void settings() {
+  size(960, 800, P3D);
+  pixelDensity(displayDensity());
 }
 
-void initialize(final heronarts.lx.studio.LXStudio lx, heronarts.lx.studio.LXStudio.UI ui) {
+void setup() {
+  applet = this;
+
+  heronarts.lx.studio.LXStudio.Flags flags = new heronarts.lx.studio.LXStudio.Flags(this);
+  flags.useGLPointCloud = true;
+  flags.startMultiThreaded = true;
+  flags.resizable = true;
+  
+  lx = new heronarts.lx.studio.LXStudio(this, flags, buildModel());
+}
+
+void initialize(LX lx) {
   domeOutput = new DomeOutput();
   domeOutput.initOutput(lx);
+}
+
+void initializeUI(final heronarts.lx.studio.LXStudio lx, heronarts.lx.studio.LXStudio.UI ui) {
+  // Modify the UI theme if you like
 }
 
 void onUIReady(heronarts.lx.studio.LXStudio lx, heronarts.lx.studio.LXStudio.UI ui) {
@@ -44,12 +55,9 @@ void onUIReady(heronarts.lx.studio.LXStudio lx, heronarts.lx.studio.LXStudio.UI 
 }
 
 void draw() {
-  // All is handled by LX Studio
+  // Nothing needs to happen here, this method just needs to exist for Processing
+  // to run a draw loop. You should not need to do anything here.
 }
-
-// Configuration flags
-final static boolean MULTITHREADED = true;
-final static boolean RESIZABLE = true;
 
 // Helpful global constants
 final static float INCHES = 1;

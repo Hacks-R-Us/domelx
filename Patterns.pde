@@ -122,16 +122,16 @@ public static class FirePattern extends LXPattern {
       // Instant modulation reduces the height of the fire in the current frame
       int instantModulation = (int)(heightModulation.getValue() * applet.random(1));
       
-      // Instatnt target height is the height of the fire this frame
+      // Instant target height is the height of the fire this frame
       int instantTargetHeight = (int)(height.getValue() - applet.random(10)) - instantModulation;
       
       for (LXPoint p : model.points){
-        if(p.z <= instantTargetHeight){
+        if(p.y <= instantTargetHeight){
           //colors[p.index] = LXColor.lerp(LXColor.rgb(200, 0, 0), colors[p.index]);
           target_red[p.index] = 200;
           target_green[p.index] = (int)map(p.z, 0, instantTargetHeight, 0, 150);
           target_blue[p.index] = (int)map(p.z, 0, instantTargetHeight, 0, 30);
-        }else if(p.z > instantTargetHeight && p.z <= instantTargetHeight + (applet.random(1) * targetCrackle.getValue() * 5)){
+        }else if(p.y > instantTargetHeight && p.y <= instantTargetHeight + (applet.random(1) * targetCrackle.getValue() * 5)){
           target_red[p.index] = 200;
           target_green[p.index] = 150;
           target_blue[p.index] = 30;
@@ -290,29 +290,33 @@ public static class StrutSparklePattern extends LXPattern {
 
   public final CompoundParameter chance = new CompoundParameter("Chance", 0.01)
     .setDescription("The probability any strut is lit on each run.");
-  //public final DiscreteParameter number = new DiscreteParameter("Number", 128)
-  //  .setDescription("The number of simultaneous points");
+  public final CompoundParameter time = new CompoundParameter("Time", 0.5, 60)
+    .setDescription("Time between new states (seconds)");
 
-  private int[] lastcolors;
+  private int[] lastColors;
+  private int[] targetColors;
+  private int timeSinceChange = 0;
 
   public StrutSparklePattern(LX lx) {
     super(lx);
     addParameter("chance", this.chance);
+    addParameter("time", this.time);
 
-    this.lastcolors = new int[colors.length];
-    //addParameter("number", this.number);
+    this.lastColors = new int[colors.length];
+    this.targetColors = new int[colors.length];
   }
 
-  public void run(double deltaMs) {
-      // for(int i=0; i<this.number.getValuei(); i++) {
-      //   LXPoint p = model.points[int(applet.random(model.points.length))];
-      //   colors[p.index] = LXColor.gray(100);
-      // }
-      for (LXFixture s : model.fixtures) {
-        int c = applet.random(1) < this.chance.getValuef()/10 ? LXColor.gray(100) : LXColor.gray(0);
-        //this.lastcolors.
-        setColor(s, c);
-        this.lastcolors = colors.clone();
+  public void run(double deltaMs){
+    timeSinceChange += deltaMs;
+    if(timeSinceChange >= time.getValue() * 1000){
+      this.lastColors = colors.clone();
+      for (LXModel s : model.children) {
+        int[] colorBuffer = s.toIndexBuffer();
+        print(colorBuffer);
+        int colour = applet.random(1) < this.chance.getValuef() ? LXColor.gray(100) : LXColor.gray(0);
+        setColor(s, colour);
       }
+      timeSinceChange = 0;
+    }
   }
 }
