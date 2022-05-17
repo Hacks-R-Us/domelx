@@ -290,29 +290,31 @@ public static class StrutSparklePattern extends LXPattern {
 
   public final CompoundParameter chance = new CompoundParameter("Chance", 0.01)
     .setDescription("The probability any strut is lit on each run.");
-  //public final DiscreteParameter number = new DiscreteParameter("Number", 128)
-  //  .setDescription("The number of simultaneous points");
+  public final CompoundParameter time = new CompoundParameter("Time", 0.5, 60)
+    .setDescription("Time between new states (seconds)");
 
-  private int[] lastcolors;
+  private int[] lastColors;
+  private int[] targetColors;
+  private int timeSinceChange = 0;
 
   public StrutSparklePattern(LX lx) {
     super(lx);
     addParameter("chance", this.chance);
+    addParameter("time", this.time);
 
-    this.lastcolors = new int[colors.length];
-    //addParameter("number", this.number);
+    this.lastColors = new int[colors.length];
+    this.targetColors = new int[colors.length];
   }
 
   public void run(double deltaMs) {
-      // for(int i=0; i<this.number.getValuei(); i++) {
-      //   LXPoint p = model.points[int(applet.random(model.points.length))];
-      //   colors[p.index] = LXColor.gray(100);
-      // }
-      for (LXFixture s : model.fixtures) {
-        int c = applet.random(1) < this.chance.getValuef()/10 ? LXColor.gray(100) : LXColor.gray(0);
-        //this.lastcolors.
-        setColor(s, c);
-        this.lastcolors = colors.clone();
+      this.timeSinceChange += deltaMs;
+      if (this.timeSinceChange >= this.time.getValue() * 1000) {
+        this.lastColors = this.colors.clone();
+        for (LXFixture s : model.fixtures) {
+          int c = applet.random(1) < this.chance.getValuef() ? LXColor.gray(100) : LXColor.gray(0);
+          setColor(s, c);
+        }
+        this.timeSinceChange = 0;
       }
   }
 }
