@@ -41,6 +41,25 @@ public static class PlanePattern extends LXPattern {
   }
 }
 
+public static class DomePattern extends LXPattern {
+  public final static int PATHS_IN_SEGMENT = 5;
+  public final static int STRUTS_IN_PATH = 10;
+  
+  public DomePattern(LX lx) {
+    super(lx);
+  }
+  
+  public void run(double deltaMs) {}
+  
+  public List<LXFixture> GetStrutsInSegment(int segmentIndex) {
+    return this.model.fixtures.subList(segmentIndex * PATHS_IN_SEGMENT * STRUTS_IN_PATH, (segmentIndex + 1) * PATHS_IN_SEGMENT * STRUTS_IN_PATH);
+  }
+
+  public List<LXFixture> GetStrutsInPath(int segmentIndex, int pathIndex) {
+    return this.model.fixtures.subList((segmentIndex * PATHS_IN_SEGMENT * STRUTS_IN_PATH) + (pathIndex * STRUTS_IN_PATH), (segmentIndex * PATHS_IN_SEGMENT * STRUTS_IN_PATH) + ((pathIndex + 1) * STRUTS_IN_PATH));
+  }
+}
+
 @LXCategory("Form")
 public static class SparklePattern extends LXPattern {
 
@@ -316,5 +335,30 @@ public static class StrutSparklePattern extends LXPattern {
         }
         this.timeSinceChange = 0;
       }
+  }
+}
+
+@LXCategory("Form")
+public static class PathTestPattern extends DomePattern {
+  private static final int[] pathColors = {
+    LXColor.rgb(244, 102, 102),
+    LXColor.rgb(246, 178, 107),
+    LXColor.rgb(255, 229, 153),
+    LXColor.rgb(182, 215, 168),
+    LXColor.rgb(164, 194, 244),
+  };
+  
+  public PathTestPattern(LX lx) {
+    super(lx);
+  }
+
+  public void run(double deltaMs) {
+    for (int segmentIndex = 0; segmentIndex < 5; segmentIndex++) {
+      for (int pathIndex = 0; pathIndex < 5; pathIndex++) {
+        for (LXFixture strut : this.GetStrutsInPath(segmentIndex, pathIndex)) {
+          setColor(strut, PathTestPattern.pathColors[pathIndex]);
+        }
+      }
+    }
   }
 }
