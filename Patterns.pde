@@ -44,15 +44,8 @@ public static class StrutVisualizerPattern extends DomePattern {
   
   private int[] previousValues = new int[model.points.length];
   private double[] timeSinceFade = new double[model.points.length];
-  private double[] timeSinceLastFadeStep = new double[model.points.length];
 
-  private static final int[] pathColors = {
-    LXColor.rgb(244, 102, 102),
-    LXColor.rgb(246, 178, 107),
-    LXColor.rgb(255, 229, 153),
-    LXColor.rgb(182, 215, 168),
-    LXColor.rgb(164, 194, 244),
-  };
+  private static final int baseColor = LXColor.rgb(255, 255, 255);
 
   public StrutVisualizerPattern(LX lx) {
     super(lx);
@@ -74,25 +67,19 @@ public static class StrutVisualizerPattern extends DomePattern {
           for (LXPoint p : strut.getPoints()) {
             if (p.y <= targetY) {
               this.timeSinceFade[p.index] = 0;
-              this.timeSinceLastFadeStep[p.index] = 0;
-              previousValues[p.index] = StrutVisualizerPattern.pathColors[pathIndex];
-              setColor(p.index, StrutVisualizerPattern.pathColors[pathIndex]);
+              previousValues[p.index] = StrutVisualizerPattern.baseColor;
+              colors[p.index] = StrutVisualizerPattern.baseColor;
             } else {
-              this.timeSinceLastFadeStep[p.index] += deltaMs;
-              if (this.timeSinceLastFadeStep[p.index] >= 500) {
-                this.timeSinceLastFadeStep[p.index] = 0;
-                this.timeSinceFade[p.index] += 500;
-                float totalFadeTime = (1 - (p.y / model.yMax)) * 2000;
-                float fadePosition = (min(totalFadeTime, (float)this.timeSinceFade[p.index])) / totalFadeTime;
-                if (fadePosition > 0.95) {
-                  this.timeSinceFade[p.index] = 0;
-                  this.timeSinceLastFadeStep[p.index] = 0;
-                  previousValues[p.index] = 0;
-                  setColor(p.index, 0);
-                } else {
-                  int prev = LXColor.scaleBrightness(previousValues[p.index], 1 - fadePosition);
-                  setColor(p.index, prev);
-                }
+              this.timeSinceFade[p.index] += deltaMs;
+              float totalFadeTime = (1 - (p.y / model.yMax)) * 2000;
+              float fadePosition = (min(totalFadeTime, (float)this.timeSinceFade[p.index])) / totalFadeTime;
+              if (fadePosition > 0.95) {
+                this.timeSinceFade[p.index] = 0;
+                previousValues[p.index] = 0;
+                colors[p.index] = 0;
+              } else {
+                int prev = LXColor.scaleBrightness(previousValues[p.index], 1 - fadePosition);
+                colors[p.index] = prev;
               }
             }
           }
