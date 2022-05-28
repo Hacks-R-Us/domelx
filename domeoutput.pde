@@ -54,13 +54,11 @@ public class UIOutputControls extends UICollapsibleSection {
     setTitle("Output"); 
     setLayout(UI2dContainer.Layout.VERTICAL);
     setChildMargin(2);
-    new UILabel(0, 0, getContentWidth(), 18).setLabel("Hello").addToContainer(this);
     new UIButton(0,0, getContentWidth(), 18) {
       public void onToggle(boolean state) {
         domeOutput.setEnabled(state);
       }
     }.setLabel("Enabled").setEnabled(true).setActive(domeOutput.enabled).addToContainer(this);
-    new UITextBox(0, 0, getContentWidth(), 18).setValue("Test").addToContainer(this);
   }
 }
 
