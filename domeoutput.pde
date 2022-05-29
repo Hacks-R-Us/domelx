@@ -23,8 +23,8 @@ public class DomeOutput {
         LXDatagramOutput segmentOutput = new LXDatagramOutput(lx);
         LXDatagram dg = new DomeDatagram(numleds, (byte)segmentIndex);
         try {
-          segmentOutput.addDatagram(dg.setAddress("127.0.0.0").setPort(1337));
-        } catch (Exception e) {
+         segmentOutput.addDatagram(dg.setAddress("127.0.0.0").setPort(1337));
+        } catch (java.net.UnknownHostException e) {
           println(e);
         }
         segmentOutput.enabled.setValue(enabled);
@@ -33,6 +33,22 @@ public class DomeOutput {
       } catch (java.net.SocketException e) {
         println(e);
       }
+    }
+    
+    JSONArray jsonUplights = domeConf.getJSONArray("uplights");
+    try {
+      LXDatagramOutput uplightOutput = new LXDatagramOutput(lx);
+      LXDatagram dg = new UplightDatagram(jsonUplights.size());
+      try {
+        uplightOutput.addDatagram(dg.setAddress("127.0.0.0").setPort(1338));
+      } catch (java.net.UnknownHostException e) {
+        println(e);
+      }
+      uplightOutput.enabled.setValue(enabled);
+      lx.engine.output.addChild(uplightOutput);
+      this.outputs.add(uplightOutput);
+    } catch (Exception e) {
+      println(e);
     }
   }
 
@@ -51,7 +67,7 @@ public class DomeOutput {
 public class UIOutputControls extends UICollapsibleSection {
   public UIOutputControls(final LXStudio.UI ui, final DomeOutput domeOutput) {
     super(ui, 0, 0, ui.leftPane.global.getContentWidth(), 200);
-    setTitle("Output"); 
+    setTitle("Dome Output"); 
     setLayout(UI2dContainer.Layout.VERTICAL);
     setChildMargin(2);
     new UIButton(0,0, getContentWidth(), 18) {
@@ -72,10 +88,23 @@ public class DomeDatagram extends LXDatagram  {
   public void onSend(int[] colors) {
     this.buffer[0] = this.segmentIndex;
 
-    for(int i=0; i<min(colors.length, this.buffer.length/3); i++) { //TODO: be more smart
-      this.buffer[1 + (i*3)] = (byte) (0xff & (colors[i]>>16));
-      this.buffer[1 + ((i*3)+1)] = (byte) (0xff & (colors[i]>>8));
-      this.buffer[1 + ((i*3)+2)] = (byte) (0xff & (colors[i]));
+    for(int i=0; i<min(colors.length, this.buffer.length / 3); i++) {
+      this.buffer[1 + (i*3)] = (byte) (0xff & (colors[(this.segmentIndex * 2092) + i]>>16));
+      this.buffer[1 + ((i*3)+1)] = (byte) (0xff & (colors[(this.segmentIndex * 2092) + i]>>8));
+      this.buffer[1 + ((i*3)+2)] = (byte) (0xff & (colors[(this.segmentIndex * 2092) + i]));
+    }
+  }
+}
+
+public class UplightDatagram extends LXDatagram  {
+  public UplightDatagram(int size) {
+    super(size * 3);
+  }
+  public void onSend(int[] colors) {
+    for(int i=0; i<min(colors.length, this.buffer.length / 3); i++) {
+      this.buffer[i*3] = (byte) (0xff & (colors[(5 * 2092) + i]>>16));
+      this.buffer[(i*3)+1] = (byte) (0xff & (colors[(5 * 2092) + i]>>8));
+      this.buffer[(i*3)+2] = (byte) (0xff & (colors[(5 * 2092) + i]));
     }
   }
 }

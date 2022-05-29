@@ -15,6 +15,10 @@ public static class DomePattern extends LXPattern {
   public List<LXFixture> GetStrutsInPath(int segmentIndex, int pathIndex) {
     return this.model.fixtures.subList((segmentIndex * PATHS_IN_SEGMENT * STRUTS_IN_PATH) + (pathIndex * STRUTS_IN_PATH), (segmentIndex * PATHS_IN_SEGMENT * STRUTS_IN_PATH) + ((pathIndex + 1) * STRUTS_IN_PATH));
   }
+  
+  public List<LXFixture> GetUplights() {
+    return this.model.fixtures.subList((5 * PATHS_IN_SEGMENT * STRUTS_IN_PATH), this.model.fixtures.size());
+  }
 }
 
 @LXCategory("Form")
@@ -38,21 +42,22 @@ public static class SparklePattern extends LXPattern {
 @LXCategory("Form")
 public static class StrutVisualizerPattern extends DomePattern {
   public final CompoundParameter audioLevel = new CompoundParameter("Audio Level", model.yMin - 0.1, model.yMin - 0.1, model.yMax);
-  public final CompoundParameter gain = new CompoundParameter("Gain", 1, 0, 10);
   public final CompoundParameter clipHigh = new CompoundParameter("Clip High", model.yMax, model.yMin - 0.1, model.yMax);
   public final CompoundParameter clipLow = new CompoundParameter("Clip Low", model.yMin - 0.1, model.yMin - 0.1, model.yMax);
+  public final CompoundParameter uplightThreshold = new CompoundParameter("Uplight Threshold", 0.0, 0.0, 1.0);
   
   private int[] previousValues = new int[model.points.length];
   private double[] timeSinceFade = new double[model.points.length];
 
   private static final int baseColor = LXColor.rgb(255, 255, 255);
+  private static final int uplightStartIndex = 5 * 2092;
 
   public StrutVisualizerPattern(LX lx) {
     super(lx);
     addParameter("audioLevel", this.audioLevel);
-    addParameter("gain", this.gain);
     addParameter("clipHigh", this.clipHigh);
     addParameter("clipLow", this.clipLow);
+    addParameter("uplightThreshold", this.uplightThreshold);
   }
 
   public void run(double deltaMs) {
@@ -83,6 +88,28 @@ public static class StrutVisualizerPattern extends DomePattern {
               }
             }
           }
+        }
+      }
+    }
+    
+    float fadeAmount = map(targetY, model.yMin - 0.1, model.yMax, 0.0, 1.0);
+    float threshold = (float)this.uplightThreshold.getValue();
+    for (int uplightIndex = 0; uplightIndex < 5; uplightIndex++) {
+      int index = this.uplightStartIndex + uplightIndex;
+      if (fadeAmount > threshold) {
+        this.timeSinceFade[index] = 0;
+        previousValues[index] = StrutVisualizerPattern.baseColor;
+      } else {
+        this.timeSinceFade[index] += deltaMs;
+        float totalFadeTime = 2000;
+        float fadePosition = (min(totalFadeTime, (float)this.timeSinceFade[index])) / totalFadeTime;
+        if (fadePosition > 0.95) {
+          this.timeSinceFade[index] = 0;
+          previousValues[index] = 0;
+          colors[index] = 0;
+        } else {
+          int prev = LXColor.scaleBrightness(previousValues[index], 1 - fadePosition);
+          colors[index] = prev;
         }
       }
     }
@@ -181,6 +208,10 @@ public static class PathTestPattern extends DomePattern {
           setColor(strut, PathTestPattern.pathColors[pathIndex]);
         }
       }
+    }
+    
+    for (LXFixture uplight : this.GetUplights()) {
+      setColor(uplight, LXColor.rgb(127, 255, 212));
     }
   }
 }

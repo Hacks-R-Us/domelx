@@ -16,8 +16,8 @@ public static class DomeModel extends LXModel {
     super(DomeModel.BuildFixtures(domeConf));
   }  
 
-  public static StrutFixture[] BuildFixtures(JSONObject domeConf) {
-    ArrayList<StrutFixture> struts = new ArrayList<StrutFixture>();
+  public static DomeFixture[] BuildFixtures(JSONObject domeConf) {
+    ArrayList<DomeFixture> struts = new ArrayList<DomeFixture>();
     JSONArray jsonSegments = domeConf.getJSONArray("segments");
     for (int segmentIndex = 0; segmentIndex < jsonSegments.size(); segmentIndex++) {
       JSONObject jsonSegment = jsonSegments.getJSONObject(segmentIndex);
@@ -26,19 +26,19 @@ public static class DomeModel extends LXModel {
         JSONObject jsonPath = jsonPaths.getJSONObject(pathIndex);
         JSONArray jsonStruts = jsonPath.getJSONArray("struts");
         for (int strutIndex = 0; strutIndex < jsonStruts.size(); strutIndex++) {
-          struts.add(new StrutFixture(jsonStruts.getJSONObject(strutIndex)));
+          struts.add(new DomeFixture(jsonStruts.getJSONObject(strutIndex)));
         }
       }
     }
-    return struts.toArray(new StrutFixture[struts.size()]);
+    JSONArray jsonUplights = domeConf.getJSONArray("uplights");
+    for (int uplightIndex = 0; uplightIndex < jsonUplights.size(); uplightIndex++) {
+      struts.add(new DomeFixture(jsonUplights.getJSONObject(uplightIndex)));
+    }
+    return struts.toArray(new DomeFixture[struts.size()]);
   }
 
-  public static class StrutFixture extends LXAbstractFixture {
-    // Strut type (A-F)
-    public final String type;
-
-    StrutFixture(JSONObject strutconf) {
-        this.type = strutconf.getString("strutType");
+  public static class DomeFixture extends LXAbstractFixture {
+    DomeFixture(JSONObject strutconf) {
         JSONArray leds = strutconf.getJSONArray("leds");
         for (int i=0; i<leds.size(); i++) {
           JSONArray led = leds.getJSONArray(i);
