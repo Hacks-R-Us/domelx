@@ -23,7 +23,7 @@ public class DomeOutput {
         LXDatagramOutput segmentOutput = new LXDatagramOutput(lx);
         LXDatagram dg = new DomeDatagram(numleds, (byte)segmentIndex);
         try {
-         segmentOutput.addDatagram(dg.setAddress("127.0.0.0").setPort(1337));
+         segmentOutput.addDatagram(dg.setAddress("127.0.0.1").setPort(1337));
         } catch (java.net.UnknownHostException e) {
           println(e);
         }

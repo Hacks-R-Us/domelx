@@ -1,6 +1,6 @@
 {
   "version": "0.1",
-  "timestamp": 1653780872495,
+  "timestamp": 1654205506270,
   "engine": {
     "id": 1,
     "class": "heronarts.lx.LXEngine",
@@ -21,7 +21,7 @@
       "multithreaded": true,
       "channelMultithreaded": false,
       "networkMultithreaded": false,
-      "framesPerSecond": 60.0
+      "framesPerSecond": 5.0
     },
     "palette": {
       "id": 2,
@@ -65,15 +65,15 @@
         "patternIndex": 0,
         "patterns": [
           {
-            "id": 43,
+            "id": 192,
             "class": "domelx$StrutVisualizerPattern",
             "modulationColor": -16730369,
             "parameters": {
               "label": "StrutVisualizer",
               "audioLevel": 4.894690036773682,
-              "gain": 1.0,
               "clipHigh": 8.570513242248149,
-              "clipLow": 6.477336089998944
+              "clipLow": 6.477336089998944,
+              "uplightThreshold": 0.0
             },
             "modulation": {
               "modulators": [],
@@ -187,21 +187,21 @@
           "attack": 10.0,
           "release": 100.0,
           "slope": 4.5,
-          "Band-1": 0.3583484091518917,
-          "Band-2": 0.4297512791249092,
-          "Band-3": 0.4679357365145571,
-          "Band-4": 0.5413085668177029,
-          "Band-5": 0.5368044915905947,
-          "Band-6": 0.36324264017368635,
-          "Band-7": 0.3030914151790238,
-          "Band-8": 0.14079815924841899,
-          "Band-9": 0.0,
-          "Band-10": 0.0,
-          "Band-11": 0.0,
-          "Band-12": 0.0,
-          "Band-13": 0.0,
-          "Band-14": 0.0,
-          "Band-15": 0.0,
+          "Band-1": 0.42898994839119,
+          "Band-2": 0.507440352679162,
+          "Band-3": 0.5170059696574159,
+          "Band-4": 0.5127300737902056,
+          "Band-5": 0.42188685815266014,
+          "Band-6": 0.23717907826432094,
+          "Band-7": 0.26108264079550647,
+          "Band-8": 0.25860678817799654,
+          "Band-9": 0.311671996537373,
+          "Band-10": 0.36698597218998463,
+          "Band-11": 0.4001346138770814,
+          "Band-12": 0.34657191119671715,
+          "Band-13": 0.2699939281957965,
+          "Band-14": 0.16489836576350114,
+          "Band-15": 0.2404670743057885,
           "Band-16": 0.0
         }
       },
@@ -249,7 +249,7 @@
             "id": 19
           },
           "target": {
-            "componentId": 43,
+            "componentId": 192,
             "parameterPath": "audioLevel"
           },
           "id": 122,

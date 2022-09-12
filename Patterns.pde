@@ -21,8 +21,23 @@ public static class DomePattern extends LXPattern {
   }
 }
 
+public static class RGBPattern extends LXPattern {
+  public RGBPattern (LX lx) {
+    super(lx);
+  }
+  
+  public void run(double deltaMs) {
+    
+  }
+}
+
 @LXCategory("Form")
 public static class SparklePattern extends LXPattern {
+  
+  private double timeSinceStep = 0;
+  private byte[][] steps = {
+    
+  };
 
   public final CompoundParameter chance = new CompoundParameter("Chance", 0.01)
     .setDescription("The probability any pixel is lit on each run.");
